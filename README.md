@@ -164,3 +164,127 @@ class Operation
 
 
 ```
+
+### v3 folder file 
+
+* .htaccess
+* index.php
+
+#### .htaccess file 
+* role of routing define 
+
+```htaccess
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Some hosts may require you to use the `RewriteBase` directive.
+  # Determine the RewriteBase automatically and set it as environment variable.
+  # If you are using Apache aliases to do mass virtual hosting or installed the
+  # project in a subdirectory, the base path will be prepended to allow proper
+  # resolution of the index.php file and to redirect to the correct URI. It will
+  # work in environments without path prefix as well, providing a safe, one-size
+  # fits all solution. But as you do not need it in this case, you can comment
+  # the following 2 lines to eliminate the overhead.
+  RewriteCond %{REQUEST_URI}::$1 ^(/.+)/(.*)::\2$
+  RewriteRule ^(.*) - [E=BASE:%1]
+  
+  # If the above doesn't work you might need to set the `RewriteBase` directive manually, it should be the
+  # absolute physical path to the directory that contains this htaccess file.
+  # RewriteBase /
+
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+```
+
+
+#### index.php file
+* create new user route define 
+* list of all user view route define 
+
+```php
+
+<?php
+
+use \Psr\Http\Message\ServerRequestInterface as Request;
+use \Psr\Http\Message\ResponseInterface as Response;
+
+require __DIR__ . '/../vendor/autoload.php';
+require_once '../include/operation.php';
+
+//config to show errors
+$app = new \Slim\App([
+    'settings' => [
+        'displayErrorDetails' => true
+    ]
+]);
+
+
+//create  new users
+$app->post('/register', function (Request $request, Response $response) {
+    if (ParametersAvailable(array('full_name' , 'email_address', 'password' , 'address'))) {
+        $requestData = $request->getParsedBody();
+        $full_name = $requestData['full_name'];
+        $email_address = $requestData['email_address'];
+        $password = $requestData['password'];
+        $address = $requestData['address'];
+        $db = new Operation();
+        $responseData = array();
+        $result = $db->createUser($full_name , $email_address , $password , $address);
+
+        if ($result == CREATED_CODE) {
+            $responseData['error'] = false;
+            $responseData['message'] = 'craete new user successfully';
+        }
+        elseif ($result == FAILED_CODE) {
+            $responseData['error'] = true;
+            $responseData['message'] = 'error occurred';
+        }
+         elseif ($result == EXIST_CODE) {
+            $responseData['error'] = true;
+            $responseData['message'] = 'email already exist, login';
+        }
+
+        $response->getBody()->write(json_encode($responseData));
+    }
+});
+
+
+  //getting all users
+  $app->get('/users', function (Request $request, Response $response) {
+      $db = new Operation();
+      $users = $db->getUsers();
+      $response->getBody()->write(json_encode(array("users" => $users)));
+  });
+
+
+//function to check parameters
+function ParametersAvailable($required_fields)
+{
+    $error = false;
+    $error_fields = "";
+    $request_params = $_REQUEST;
+
+    foreach ($required_fields as $field) {
+        if (!isset($request_params[$field]) || strlen(trim($request_params[$field])) <= 0) {
+            $error = true;
+            $error_fields .= $field . ', ';
+        }
+    }
+
+    if ($error) {
+        $response = array();
+        $response["error"] = true;
+        $response["message"] = 'Required field(s) ' . substr($error_fields, 0, -2) . ' is missing or empty';
+        echo json_encode($response);
+        return false;
+    }
+    return true;
+}
+
+// Run app
+$app->run();
+
+
+```
