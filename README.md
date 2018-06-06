@@ -259,6 +259,13 @@ $app->run();
 
 ```
 
+## Route of api list
+
+* create new user route (http://localhost/restapislim/v3/register)
+
+* display all users json list (http://localhost/restapislim/v3/users)
+
+
 ## Use Postman extensions Image 
 
 # Create new users Postman Image
