@@ -261,6 +261,12 @@ $app->run();
 
 ## Use Postman extensions Image 
 
+# Create new users Postman Image
+
+![alt text](https://raw.githubusercontent.com/apppath/restapislim/master/register%20users.PNG)
+
+# Display all Users List Postman Image
+
 ![alt text](https://raw.githubusercontent.com/apppath/restapislim/master/all%20users%20image.PNG)
 
 
