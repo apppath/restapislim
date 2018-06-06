@@ -31,13 +31,13 @@ php composer.phar test
 ```
 
 ### Api Files include folder
-1. constant.php
-2. connection.php
-3. operation.php
+* constant.php
+* connection.php
+* operation.php
 
 #### constant.php file
-. constant database define
-. constant api code error or success define 
+* constant database variable define
+* constant api code error or success define 
 
 ```php
 
@@ -55,8 +55,8 @@ define('FAILED_CODE', 103);
 
 ```
 #### connection.php  file
-. connect into database
-. include constant file and connect to database
+* connect into database
+* include constant file and connect to database
 
 ```php
 
@@ -99,8 +99,8 @@ class Connection
 
 #### operation.php file
 
-. create new users opertation
-. list of all user operation 
+* create new users opertation
+* list of all user operation 
 
 ```php
 
